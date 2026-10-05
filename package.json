@@ -1,0 +1,74 @@
+{
+  "name": "private-overlay",
+  "version": "1.0.0",
+  "description": "Frameless always-on-top overlay window that is excluded from screen capture on Windows.",
+  "private": true,
+  "main": "dist/main/main.js",
+  "author": "local",
+  "license": "UNLICENSED",
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:preload": "esbuild src/preload/preload.ts --bundle --platform=node --target=node20 --format=cjs --external:electron --outfile=dist/preload/preload.js",
+    "build:renderer": "tsc -p tsconfig.renderer.json",
+    "build:assets": "node scripts/copy-assets.mjs",
+    "build": "npm run build:main && npm run build:preload && npm run build:renderer && npm run build:assets",
+    "start": "npm run build && node scripts/start.mjs",
+    "dev": "npm run build && node scripts/start.mjs --dev",
+    "selftest": "npm run build && node scripts/start.mjs --selftest",
+    "typecheck": "tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
+    "setup:sidecar": "node scripts/setup-sidecar.mjs",
+    "build:sidecar": "node scripts/sidecar.mjs --build --clean",
+    "sidecar:probe": "node scripts/sidecar.mjs --probe",
+    "sidecar:devices": "node scripts/sidecar.mjs --list-devices",
+    "dist": "node scripts/check-sidecar.mjs && npm run clean && npm run build && electron-builder --win portable --config electron-builder.config.cjs",
+    "dist:dir": "node scripts/check-sidecar.mjs && npm run build && electron-builder --win dir --config electron-builder.config.cjs",
+    "dist:app-only": "node scripts/dist-app-only.mjs"
+  },
+  "dependencies": {
+    "koffi": "^2.9.0",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.18.1",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.7.2"
+  },
+  "build": {
+    "appId": "local.private.overlay",
+    "productName": "PrivateOverlay",
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/koffi/**"
+    ],
+    "files": [
+      "dist/**/*",
+      "package.json",
+      "!**/*.map"
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "PrivateOverlay-${version}-portable.exe",
+      "unicode": false
+    },
+    "compression": "maximum",
+    "publish": null,
+    "npmRebuild": false
+  }
+}

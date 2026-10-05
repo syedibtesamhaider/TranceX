@@ -1,0 +1,25 @@
+node_modules/
+dist/
+release/
+*.log
+
+# Python sidecar
+sidecar/.venv/
+sidecar/build/
+sidecar/dist/
+sidecar/entry.py
+sidecar/*.spec
+__pycache__/
+*.pyc
+
+# Claude Code local settings. Never committed: the permission entries record
+# whole command lines, and those have held API keys verbatim.
+.claude/settings.local.json
+
+# Superseded Whisper virtualenv, kept on disk only until it is deleted.
+sidecar/.venv-whisper-old/
+
+# Local secrets, in any of the shapes the app reads them from.
+.env
+.env.*
+config.local.json

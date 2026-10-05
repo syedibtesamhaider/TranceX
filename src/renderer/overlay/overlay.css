@@ -1,0 +1,501 @@
+:root {
+  --bg: rgba(17, 18, 22, 0.94);
+  --border: rgba(255, 255, 255, 0.11);
+  --fg: #c3c7cf;
+  --fg-dim: #6f747f;
+  --fg-faint: #4a4e58;
+  --ok: #5f8f6a;
+  --warn: #b0803f;
+  --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  overflow: hidden;
+  font-family: var(--font);
+  color: var(--fg);
+  user-select: none;
+  cursor: default;
+}
+
+/*
+ * The 6px inset is intentionally NOT draggable: frameless Windows resize
+ * handles live at the window edge and a drag region there would swallow them.
+ * It also gives the CSS drop shadow somewhere to land.
+ */
+body {
+  padding: 6px;
+  -webkit-app-region: no-drag;
+}
+
+.panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  -webkit-app-region: drag;
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 4px 0 8px;
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.status {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fg-faint);
+  flex: 0 0 auto;
+}
+
+.status.ok {
+  background: var(--ok);
+}
+
+.status.warn {
+  background: var(--warn);
+  box-shadow: 0 0 6px rgba(176, 128, 63, 0.6);
+}
+
+.icon {
+  -webkit-app-region: no-drag;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--fg-faint);
+  font-size: 11px;
+  line-height: 1;
+  padding: 4px 5px;
+  border-radius: 4px;
+  cursor: default;
+}
+
+.icon:hover {
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* --- transcript ------------------------------------------------------------ */
+
+
+.tstate {
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--fg-faint);
+  white-space: nowrap;
+}
+
+.tdot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fg-faint);
+  flex: 0 0 auto;
+}
+
+.tdot.listening {
+  background: var(--ok);
+  box-shadow: 0 0 6px rgba(95, 143, 106, 0.7);
+}
+
+.tdot.no_audio,
+.tdot.model_loading,
+.tdot.starting {
+  background: var(--warn);
+}
+
+.tdot.error {
+  background: #a05656;
+}
+
+.behind {
+  font-size: 9px;
+  color: var(--warn);
+  letter-spacing: 0.03em;
+}
+
+.tbtn {
+  -webkit-app-region: no-drag;
+  appearance: none;
+  font-family: var(--font);
+  font-size: 10px;
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.tbtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.tbtn.ghost {
+  background: transparent;
+  color: var(--fg-faint);
+}
+
+.tbtn.ghost:hover {
+  color: var(--fg-dim);
+}
+
+.tbtn.narrow {
+  padding: 3px 5px;
+}
+
+.tbtn.active {
+  color: #d6b3b3;
+  border-color: rgba(160, 86, 86, 0.5);
+}
+
+.tprogress {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 9px 5px;
+  flex: 0 0 auto;
+}
+
+.tprogress-track {
+  flex: 1 1 auto;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.tprogress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--fg-dim);
+  transition: width 0.2s ease;
+}
+
+.tprogress-label {
+  font-size: 9px;
+  color: var(--fg-faint);
+  white-space: nowrap;
+}
+
+.terror {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 8px 6px;
+  padding: 6px 8px;
+  font-size: 10px;
+  line-height: 1.45;
+  color: #c79a9a;
+  background: rgba(160, 86, 86, 0.12);
+  border: 1px solid rgba(160, 86, 86, 0.3);
+  border-radius: 5px;
+  -webkit-app-region: no-drag;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 88px;
+  overflow-y: auto;
+}
+
+.terror .tbtn {
+  flex: 0 0 auto;
+}
+
+.tlog {
+  --transcript-font: 12px;
+  -webkit-app-region: no-drag;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 2px 11px 8px;
+  font-size: var(--transcript-font);
+  line-height: 1.5;
+  user-select: text;
+  cursor: text;
+  outline: none;
+}
+
+.tlog::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tlog::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.09);
+  border-radius: 4px;
+}
+
+.tline {
+  display: flex;
+  gap: 7px;
+  margin: 2px 0;
+}
+
+.tline-time {
+  flex: 0 0 auto;
+  font-size: 9px;
+  line-height: 1.75;
+  color: var(--fg-faint);
+  font-variant-numeric: tabular-nums;
+  min-width: 46px;
+}
+
+.tline-text {
+  flex: 1 1 auto;
+  color: var(--fg);
+  word-break: break-word;
+}
+
+.tline.interim .tline-text {
+  /* No longer dimmed wholesale: only the unsettled tail is. */
+  color: var(--fg);
+  font-style: normal;
+}
+
+/* Already stable — the service will not revise this far back. */
+.tline-settled {
+  color: var(--fg);
+}
+
+/* Still in flux; may be rewritten as more audio arrives. */
+.tline-volatile {
+  color: var(--fg-faint);
+  font-style: italic;
+}
+
+.tnote {
+  margin: 4px 0 4px 53px;
+  font-size: 10px;
+  color: var(--warn);
+}
+
+.tjump {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  -webkit-app-region: no-drag;
+  appearance: none;
+  font-family: var(--font);
+  font-size: 10px;
+  color: var(--fg);
+  background: rgba(40, 42, 50, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 3px 10px;
+  cursor: default;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.tfoot {
+  flex: 0 0 auto;
+  padding: 3px 11px 5px;
+  font-size: 9px;
+  color: var(--fg-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.panel {
+  position: relative;
+}
+
+/* --- right-click menu ------------------------------------------------------ */
+
+.ctxmenu {
+  position: absolute;
+  z-index: 50;
+  min-width: 132px;
+  padding: 4px;
+  background: rgba(30, 31, 37, 0.99);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 7px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  -webkit-app-region: no-drag;
+}
+
+.ctxitem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 11px;
+  padding: 5px 9px;
+  border-radius: 4px;
+  cursor: default;
+}
+
+.ctxitem:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.ctxitem.danger {
+  color: #cf9d9d;
+}
+
+.ctxsep {
+  height: 1px;
+  margin: 3px 4px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* --- auto-answer panel ------------------------------------------------------ */
+
+.lookup {
+  -webkit-app-region: no-drag;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Takes real estate only once it has something to show. */
+.lookup.active {
+  flex: 1 1 55%;
+}
+
+.lbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 5px 3px 11px;
+  flex: 0 0 auto;
+}
+
+.llabel {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+.lstatus {
+  font-size: 9px;
+  color: var(--fg-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lstatus.warn {
+  color: var(--warn);
+}
+
+.llist {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 0 11px 4px;
+  min-height: 0;
+}
+
+.llist::-webkit-scrollbar {
+  width: 8px;
+}
+
+.llist::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.09);
+  border-radius: 4px;
+}
+
+.lempty {
+  padding: 0 11px 6px;
+  font-size: 10px;
+  color: var(--fg-faint);
+}
+
+.lentry {
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  border-left: 2px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.025);
+  border-radius: 0 5px 5px 0;
+  transition: opacity 0.6s ease;
+  user-select: text;
+  cursor: text;
+}
+
+.lentry.failed {
+  border-left-color: rgba(160, 86, 86, 0.6);
+}
+
+/* Faded rather than removed: hovering brings it straight back. */
+.lentry.faded {
+  opacity: 0.22;
+}
+
+.lentry:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lquestion {
+  font-size: 10px;
+  color: var(--fg-faint);
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.lanswer {
+  font-size: var(--transcript-font, 12px);
+  line-height: 1.5;
+  color: var(--fg);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.lmeta {
+  margin-top: 5px;
+  font-size: 9px;
+  color: var(--fg-faint);
+}
+
+.lmeta.error {
+  color: #c79a9a;
+}
+
+/* The model's reading of the question, dim above the answer. */
+.linterpreted {
+  font-size: 10px;
+  color: var(--fg-dim);
+  font-style: italic;
+  margin-bottom: 5px;
+  padding-left: 7px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lentry.unclear .lanswer {
+  color: var(--warn);
+  font-style: italic;
+}

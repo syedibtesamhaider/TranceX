@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
+    <title>Overlay settings</title>
+    <link rel="stylesheet" href="./settings.css" />
+  </head>
+  <body>
+    <div class="panel">
+      <header class="bar">
+        <span class="title">Settings</span>
+        <span class="spacer"></span>
+        <button class="icon" id="close" title="Close" aria-label="Close">&#10005;</button>
+      </header>
+
+      <div class="body">
+        <section class="block">
+          <div class="label">Capture protection</div>
+          <div class="protection">
+            <span class="dot" id="dot"></span>
+            <span id="protectionHeadline">checking…</span>
+          </div>
+          <p class="note" id="protectionDetail"></p>
+          <dl class="kv">
+            <dt>Affinity</dt><dd id="affinity">—</dd>
+            <dt>Windows build</dt><dd id="build">—</dd>
+            <dt>Applied via</dt><dd id="method">—</dd>
+          </dl>
+          <button class="btn" id="reapply">Re-apply now</button>
+        </section>
+
+        <section class="block">
+          <div class="label" for="opacity">Opacity <span class="value" id="opacityValue">100%</span></div>
+          <input type="range" id="opacity" min="30" max="100" step="1" />
+        </section>
+
+        <section class="block">
+          <div class="label">Transcription</div>
+          <div class="protection">
+            <span class="dot" id="tsDot"></span>
+            <span id="tsState">stopped</span>
+          </div>
+          <p class="note" id="tsDetail"></p>
+          <dl class="kv">
+            <dt>Engine</dt><dd id="tsEngine">—</dd>
+            <dt>Audio source</dt><dd id="tsAudio">—</dd>
+            <dt>Sidecar</dt><dd id="tsKind">—</dd>
+          </dl>
+
+          <div class="fields">
+            </div>
+          <div class="fields one">
+            <label class="field">
+              <span>ElevenLabs API key</span>
+              <input type="password" id="tsApiKey" spellcheck="false" placeholder="not configured" autocomplete="off" />
+            </label>
+          </div>
+          <div class="row">
+            <button class="btn ghost" id="tsSaveKey">Save key</button>
+            <button class="btn ghost" id="tsRestart2" hidden></button>
+          </div>
+          <p class="note" id="tsKeyResult"></p>
+          <label class="check">
+            <input type="checkbox" id="tsFilterBg" />
+            <span>Let the service filter background audio (realtime only)</span>
+          </label>
+          <p class="note" id="tsModeNote"></p>
+          <p class="note warnnote">
+            Transcription uploads the captured audio — other people's speech from
+            your call — to ElevenLabs, one request per sentence. Set the
+            <b>ELEVENLABS_API_KEY</b> environment variable; the key is never stored
+            in config.json.
+          </p>
+
+          <div class="fields">
+            <label class="field">
+              <span title="Realtime streams over a websocket and shows text while the person is still talking.">Mode</span>
+              <select id="tsMode">
+                <option value="realtime">realtime (scribe_v2_realtime)</option>
+                <option value="batch">batch (scribe_v1)</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Language</span>
+              <select id="tsLanguage">
+                <option value="en">English only</option>
+                <option value="ur">Urdu</option>
+                <option value="hi">Hindi</option>
+                <option value="auto">Auto-detect</option>
+              </select>
+            </label>
+          </div>
+          <div class="fields one">
+            <label class="field">
+              <span title="Sent to the API as keyterms. Add your project names and jargon.">Domain vocabulary</span>
+              <textarea id="tsInitialPrompt" rows="4" spellcheck="false"></textarea>
+            </label>
+          </div>
+          <p class="note">
+            Sent to ElevenLabs as <code>keyterms</code>, which makes these spellings far
+            likelier than acoustic lookalikes. The single most effective fix for
+            domain-word errors. Comma-separated; keep it under a hundred terms.
+          </p>
+          <div class="row">
+            <button class="btn ghost" id="tsRestart">Restart engine</button>
+          </div>
+        </section>
+
+        <section class="block">
+          <div class="label">Latency tuning</div>
+          <div class="fields three">
+            <label class="field">
+              <span title="How long our segmenter waits after speech stops before transcribing. This is the main latency lever.">End-of-speech ms</span>
+              <input type="number" id="tsSegmentSilence" min="150" max="1500" step="50" />
+            </label>
+            <label class="field">
+              <span title="faster-whisper's internal Silero VAD: minimum silence inside the chunk.">VAD silence ms</span>
+              <input type="number" id="tsVadSilence" min="100" max="1500" step="50" />
+            </label>
+            <label class="field">
+              <span title="Padding Silero keeps around detected speech.">VAD pad ms</span>
+              <input type="number" id="tsVadPad" min="0" max="500" step="20" />
+            </label>
+          </div>
+          <div class="fields three">
+            <label class="field">
+              <span title="Long monologues are flushed at least this often.">Max segment s</span>
+              <input type="number" id="tsMaxSegment" min="2" max="60" step="0.5" />
+            </label>
+            <label class="field">
+              <span title="How long a finished segment waits for a continuation before being published. 0 disables merging.">Merge window ms</span>
+              <input type="number" id="tsMergeWindow" min="0" max="5000" step="100" />
+            </label>
+            <label class="field">
+              <span title="A merged sentence is published at this length no matter what.">Merge cap s</span>
+              <input type="number" id="tsMergeMax" min="2" max="60" step="1" />
+            </label>
+            <label class="field">
+              <span title="Silence shorter than this counts as a mid-sentence breath, not a sentence boundary.">Merge gap ms</span>
+              <input type="number" id="tsMergeGap" min="0" max="5000" step="100" />
+            </label>
+          </div>
+          <p class="note">
+            A segment that does not end in <b>. ? !</b> waits for the merge window in
+            case the speaker was only pausing. If a continuation arrives, the combined
+            <i>audio</i> is re-transcribed — not the two texts glued together — so
+            Whisper sees the whole sentence. Questions are only detected on the
+            merged result.
+          </p>
+          <p class="note">
+            <b>End-of-speech ms</b> is what you actually feel — it is the wait before a
+            finished sentence is sent to the recognizer. The two VAD values only trim
+            silence inside that chunk and barely move latency. Lower values mean faster
+            text but more fragmented sentences.
+          </p>
+          <p class="note" id="tsLatency">No timing data yet.</p>
+        </section>
+
+        <section class="block">
+          <div class="label">Auto-answer</div>
+          <label class="check">
+            <input type="checkbox" id="luAuto" />
+            <span>Answer questions heard in the call automatically</span>
+          </label>
+          <p class="note" id="luStatus">off</p>
+
+          <div class="fields">
+            <label class="field">
+              <span>Provider</span>
+              <select id="luProvider">
+                <option value="anthropic">anthropic</option>
+                <option value="openai_compatible">openai_compatible</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Model</span>
+              <input type="text" id="luModel" spellcheck="false" />
+            </label>
+          </div>
+          <div class="fields one" id="luBaseUrlRow">
+            <label class="field">
+              <span>Base URL</span>
+              <input type="text" id="luBaseUrl" spellcheck="false" placeholder="https://api.groq.com/openai/v1" />
+            </label>
+          </div>
+          <div class="fields one">
+            <label class="field">
+              <span>API key</span>
+              <input type="password" id="luApiKey" spellcheck="false" placeholder="not configured" autocomplete="off" />
+            </label>
+          </div>
+          <div class="row">
+            <button class="btn" id="luTest">Test connection</button>
+            <button class="btn ghost" id="luSaveKey">Save key</button>
+          </div>
+          <p class="note" id="luTestResult"></p>
+          <p class="note">
+            The key is stored in plain text in config.json. Set the
+            <b>OVERLAY_LLM_API_KEY</b> environment variable instead to keep it off
+            disk — it overrides this field. See PROVIDERS.md.
+          </p>
+
+          <div class="fields three">
+            <label class="field">
+              <span title="Bullet range requested from the model.">Bullets</span>
+              <input type="text" id="luBullets" spellcheck="false" />
+            </label>
+            <label class="field">
+              <span title="Hard cap per hour. Over it, calls are skipped, never queued.">Calls/hour</span>
+              <input type="number" id="luPerHour" min="1" max="1000" step="1" />
+            </label>
+            <label class="field">
+              <span title="Minimum gap between two calls.">Spacing ms</span>
+              <input type="number" id="luSpacing" min="0" max="600000" step="1000" />
+            </label>
+          </div>
+          <p class="note">
+            Answers are in-memory only and cleared on quit. Turning this on sends
+            transcribed speech from your call to the configured provider.
+          </p>
+        </section>
+
+        <section class="block">
+          <div class="label">Global hotkeys</div>
+          <div class="row">
+            <span class="hk-label">Show / hide</span>
+            <button class="hotkey" id="hotkey" data-target="overlay">Control+Shift+Space</button>
+            <button class="btn ghost" id="hotkeyReset">Reset</button>
+          </div>
+          <div class="row spaced">
+            <span class="hk-label">Transcription</span>
+            <button class="hotkey" id="hotkeyT" data-target="transcribe">Control+Shift+T</button>
+            <button class="btn ghost" id="hotkeyTReset">Reset</button>
+          </div>
+          <div class="row spaced">
+            <span class="hk-label">Lookup</span>
+            <button class="hotkey" id="hotkeyL" data-target="lookup">Control+Shift+A</button>
+            <button class="btn ghost" id="hotkeyLReset">Reset</button>
+          </div>
+          <div class="row spaced">
+            <span class="hk-label">Pause answers</span>
+            <button class="hotkey" id="hotkeyP" data-target="pause">Control+Shift+P</button>
+            <button class="btn ghost" id="hotkeyPReset">Reset</button>
+          </div>
+          <div class="row spaced">
+            <span class="hk-label">Quit</span>
+            <button class="hotkey" id="hotkeyQ" data-target="quit">Control+Shift+Q</button>
+            <button class="btn ghost" id="hotkeyQReset">Reset</button>
+          </div>
+          <p class="note" id="hotkeyNote">Click one, then press a combination with at least one modifier.</p>
+          <p class="note warnnote" id="hotkeyFailures" hidden></p>
+        </section>
+
+        <section class="block">
+          <label class="check">
+            <input type="checkbox" id="alwaysOnTop" />
+            <span>Always on top</span>
+          </label>
+        </section>
+
+        <section class="block">
+          <div class="label">Storage</div>
+          <p class="note">
+            Only settings are written to disk. The transcript is never saved.
+          </p>
+          <div class="path mono" id="configPath">—</div>
+          <div class="row">
+            <button class="btn ghost" id="revealConfig">Show config</button>
+          </div>
+        </section>
+
+        <section class="block">
+          <button class="btn danger" id="quit">Quit overlay</button>
+        </section>
+      </div>
+    </div>
+    <script type="module" src="./settings.js"></script>
+  </body>
+</html>

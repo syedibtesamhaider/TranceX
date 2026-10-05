@@ -1,0 +1,9 @@
+# Python 3.11 — PyAudioWPatch has no wheels for 3.12+ yet.
+#
+# Recognition is done entirely by the ElevenLabs API, so this is now a thin
+# audio-capture client: no faster-whisper, no ctranslate2, no onnxruntime, no
+# CUDA runtime, no model weights.
+PyAudioWPatch==0.2.12.7
+numpy>=1.26,<3
+websockets>=12,<16
+requests>=2.31

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
+    />
+    <title>Overlay</title>
+    <link rel="stylesheet" href="./overlay.css" />
+  </head>
+  <body>
+    <div class="panel">
+      <header class="bar">
+        <span class="status" id="status" title="Capture protection"></span>
+        <span class="tstate">
+          <i class="tdot" id="tDot"></i>
+          <span id="tStateText">stopped</span>
+        </span>
+        <span class="behind" id="tBehind" hidden>falling behind</span>
+        <span class="spacer"></span>
+        <button class="tbtn" id="tToggle">Start</button>
+        <button class="tbtn ghost" id="tCopy" title="Copy visible transcript">Copy</button>
+        <button class="tbtn ghost" id="tClear" title="Clear transcript">Clear</button>
+        <button class="tbtn ghost narrow" id="tFontDown" title="Smaller text">A&minus;</button>
+        <button class="tbtn ghost narrow" id="tFontUp" title="Larger text">A+</button>
+        <button class="icon" id="settings" title="Settings" aria-label="Settings">&#9881;</button>
+        <button class="icon" id="hide" title="Hide (Esc)" aria-label="Hide">&#10005;</button>
+      </header>
+
+      <div class="tprogress" id="tProgress" hidden>
+        <div class="tprogress-track"><div class="tprogress-fill" id="tProgressFill"></div></div>
+        <span class="tprogress-label" id="tProgressLabel"></span>
+      </div>
+
+      <div class="terror" id="tError" hidden>
+        <span id="tErrorText"></span>
+        <button class="tbtn" id="tRestart">Restart engine</button>
+      </div>
+
+      <!-- Auto-answer. Collapsed to a status strip until it has entries. -->
+      <section class="lookup" id="lookupPanel">
+        <div class="lbar">
+          <span class="llabel">answers</span>
+          <span class="lstatus" id="lookupStatus">auto-answer off</span>
+          <span class="spacer"></span>
+          <button class="tbtn ghost" id="lookupPause" title="Pause auto-answer">Pause</button>
+          <button class="tbtn ghost" id="lookupClear" title="Clear answers">Clear</button>
+        </div>
+        <div class="llist" id="lookupList"></div>
+        <div class="lempty" id="lookupEmpty">No answers yet.</div>
+      </section>
+
+      <div class="tlog" id="tLog" tabindex="0"></div>
+      <button class="tjump" id="tJump" hidden>Jump to latest</button>
+      <div class="tfoot" id="tFoot"></div>
+
+      <!--
+        Right-click menu. Deliberately HTML and not Electron's native Menu: a
+        native popup is a separate top-level window that does not inherit
+        WDA_EXCLUDEFROMCAPTURE, so it would be visible in a screen share.
+      -->
+      <div class="ctxmenu" id="ctxMenu" role="menu" hidden>
+        <button class="ctxitem" data-action="settings" role="menuitem">Settings…</button>
+        <div class="ctxsep"></div>
+        <button class="ctxitem danger" data-action="quit" role="menuitem">Quit</button>
+      </div>
+    </div>
+    <script type="module" src="./overlay.js"></script>
+  </body>
+</html>
