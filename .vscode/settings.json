@@ -1,0 +1,15 @@
+{
+  // The Python extension finds sidecar/.venv and, by default, injects an
+  // activation command into every terminal opened in this folder. This is a
+  // TypeScript/Electron project that happens to contain a Python sidecar, so
+  // that activation is wrong almost every time: it shadows `python` on PATH
+  // for npm, git and build work that has nothing to do with the sidecar.
+  //
+  // Activate it deliberately instead, when actually working on the sidecar:
+  //   sidecar\.venv\Scripts\Activate.ps1
+  "python.terminal.activateEnvironment": false,
+
+  // Still point the extension at the right interpreter for linting and
+  // IntelliSense - that part is wanted, it is only the terminal that is not.
+  "python.defaultInterpreterPath": "${workspaceFolder}/sidecar/.venv/Scripts/python.exe"
+}
